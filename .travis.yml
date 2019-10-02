@@ -20,6 +20,10 @@ addons:
       - liblz4-dev
       - libgeographic-dev
       - cppcheck
+  sonarcloud:
+    organization: "comran"
+    token:
+      secure: "Hr9D7hBY8W6Eu7ilpZItPpqiAHCr+xW7AjZlxWMjfUv2oNeYRlxqw/1yu8KwPVACXY8wcXWJU/ykJGGWNHi7uOm7hQQP3pBKdxgKO3eEPGulXFITL2kVXRJIGRAStxbsPbpg+S7dYu506hCe/lhnCZ+mDJ9XXQpPbR8XrLuwQlBeOwOzlc0otKpR1DKGoIEfStULl8zY7isJfF5BzjUkC5wXXZGoB46txDUg69x68p8Ov4AgG+B/8QQGt8F+EUAcbAJrETcqFuBbDvQ/aCMxlFUGchnZqQgG3I4wMKNAZusnPA6+7d8m+ndmxrQZL2qqWxOoWL/k8S59Li7TJ+60bCUK1aw9GDPpyNfyic9P0kitwlpwfJy5XLZSqgCctIVlvCw7cj1vdS0Ly0vlR9fE71+8gcpMSdxgBXJFal9VbFE3B2AKKFsULbGM2CLLVLf+LB646x9F3erbvOU0sTGsKIvEKqC9DlnqfAd/uWH+t/+8SqZnXa/bMXP4G6dGXiVpOf8ehqdvU09++DrdQD+NJ8Gyt1GCUM2vj6vhd9E1uuL9ZIAP7BAKVv2L8JMbrdgqkMwH44zFRGMTFhHzgKddLjj6tAirS8IJlg+gMSwyEJjKf1fYyjkjydgQfdkcnlDYTj0/FVndP3TNP9ePvNaeKnCTXGgbgso8iypk+fmUlb4="
 
 before_install:
   - sudo locale-gen en_US en_US.UTF-8
@@ -29,9 +33,19 @@ before_install:
   - sudo sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
   - sudo apt-get update
   - sudo apt-get install -y ros-dashing-ros-base python3-colcon-common-extensions
+  - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
+  - wget -P /tmp https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+  - unzip -d /tmp /tmp/build-wrapper-linux-x86.zip
+  - ln -s /tmp/build-wrapper-linux-x86/libinterceptor-x86_64.so /tmp/build-wrapper-linux-x86/libinterceptor-haswell.so
 
 script:
   - set -o pipefail
   - source /opt/ros/dashing/setup.bash
-  - colcon build --event-handlers console_direct+
+  - mkdir build
+  - cd build
+  - cmake ..
+  - /tmp/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir ../bw-output make clean all
+  - cd ..
+  - sonar-scanner -X
 

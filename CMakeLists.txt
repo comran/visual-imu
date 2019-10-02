@@ -33,3 +33,15 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
+################################################################################
+# Source Code ##################################################################
+################################################################################
+
+file(GLOB_RECURSE ${PROJECT_NAME}_SRCS
+  "src/*.cc")
+file(GLOB_RECURSE ${PROJECT_NAME}_HDRS
+  "src/*.h")
+
+add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
+
