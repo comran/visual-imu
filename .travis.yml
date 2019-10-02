@@ -1,0 +1,37 @@
+dist: bionic
+sudo: required
+services: docker
+language: bash
+
+addons:
+  apt:
+    packages:
+      - build-essential
+      - libzmq3-dev
+      - libzmqpp-dev
+      - libgtest-dev
+      - libprotobuf-dev
+      - protobuf-compiler
+      - curl
+      - gnupg2
+      - lsb-release
+      - libboost1.65-dev
+      - libflann-dev
+      - liblz4-dev
+      - libgeographic-dev
+      - cppcheck
+
+before_install:
+  - sudo locale-gen en_US en_US.UTF-8
+  - sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+  - export LANG=en_US.UTF-8
+  - curl http://repo.ros2.org/repos.key | sudo apt-key add -
+  - sudo sh -c 'echo "deb [arch=amd64,arm64] http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+  - sudo apt-get update
+  - sudo apt-get install -y ros-dashing-ros-base python3-colcon-common-extensions
+
+script:
+  - set -o pipefail
+  - source /opt/ros/dashing/setup.bash
+  - colcon build --event-handlers console_direct+
+
