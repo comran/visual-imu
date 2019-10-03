@@ -37,11 +37,11 @@ ament_package()
 ################################################################################
 # Source Code ##################################################################
 ################################################################################
+add_subdirectory(src)
 
-file(GLOB_RECURSE ${PROJECT_NAME}_SRCS
-  "src/*.cc")
-file(GLOB_RECURSE ${PROJECT_NAME}_HDRS
-  "src/*.h")
+# file(GLOB_RECURSE ${PROJECT_NAME}_SRCS
+#   "src/*.cc")
+# file(GLOB_RECURSE ${PROJECT_NAME}_HDRS
+#   "src/*.h")
 
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
-
+# add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRCS})
