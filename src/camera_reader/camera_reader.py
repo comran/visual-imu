@@ -7,6 +7,11 @@ from std_msgs.msg import String
 import sensor_msgs.msg
 from cv_bridge import CvBridge, CvBridgeError
 
+class CameraReader:
+    def __init__(self):
+        self.camera = cv2.VideoCapture(0)
+        
+
 def main(args=None):
     rclpy.init(args=args)
 
