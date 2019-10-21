@@ -3,3 +3,6 @@
 /log
 *.mp4
 /test_footage
+*.pyc
+*.pyo
+__pycache__

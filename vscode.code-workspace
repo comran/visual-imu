@@ -32,12 +32,14 @@
       "**/log": true,
       "**/.*.swp": true,
       "**/CMakeFiles": true,
+      "**/__pycache__": true,
     },
 
     "files.watcherExclude": {
       "**/.git/objects/**": true,
       "**/.git/subtree-cache/**": true,
       "**/CMakeFiles": true,
+      "**/__pycache__": true,
     },
 
     "telemetry.enableCrashReporter": false,
