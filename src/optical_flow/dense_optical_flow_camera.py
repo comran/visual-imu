@@ -25,6 +25,9 @@ last_time = time.time()
 #TODO: Look into divergence/curl for x and roll 
 #TODO: Contour detection research
 
+# log_file = open("results.csv", "w+")
+
+start_time = time.time()
 while(1):
     ret, frame_original = cap.read()
     frame2 = resize_res(frame_original, 1.0 / 2)
@@ -35,12 +38,14 @@ while(1):
     flow_avg_x = np.mean(flow[...,0])
     flow_avg_y = np.mean(flow[...,1])
     avg_mag, avg_ang = cv.cartToPolar(np.array(flow_avg_x), np.array(flow_avg_y))
-    # print((flow_avg_x, flow_avg_y))
+    print((flow_avg_x, flow_avg_y))
+
+    # log_file.write("%f,%f,%f\n" % (time.time() - start_time, flow_avg_x, flow_avg_y))
 
     # avg_mag = np.mean(mag)
     # avg_ang = np.mean(ang)
     avg_ang_deg = avg_ang * 180 / np.pi
-    print("magnitude: " + str(avg_mag) + " angle: " + str(avg_ang_deg))
+    # print("magnitude: " + str(avg_mag) + " angle: " + str(avg_ang_deg))
 
     # Draw an arrow depicting the average optical flow.
     arrow_scale = 30

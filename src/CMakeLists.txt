@@ -1,2 +1,0 @@
-add_subdirectory(camera_reader)
-add_subdirectory(optical_flow)
