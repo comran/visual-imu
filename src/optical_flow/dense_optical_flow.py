@@ -2,6 +2,7 @@ import numpy as np
 import cv2 as cv
 import math
 import time
+import functools
 
 FARNEBACK_PYRAMID_SCALE = 0.5
 FARNEBACK_PYRAMID_LEVELS = 1
@@ -15,12 +16,20 @@ class DenseOpticalFlow:
     def __init__(self):
         self.previous_bw_frame = None
 
+    def find_divergence(self, vector_field):
+        return np.mean(functools.reduce(np.add, np.gradient(vector_field)))
+
     def process(self, input_frame):
+        scale = 0.5
+        input_frame = cv.resize(input_frame,
+            (int(input_frame.shape[1] * scale), int(input_frame.shape[0] * scale)),
+            interpolation = cv.INTER_AREA)
+
         current_bw_frame = cv.cvtColor(input_frame, cv.COLOR_BGR2GRAY)
 
         if self.previous_bw_frame is None:
             self.previous_bw_frame = current_bw_frame
-            return (0, 0)
+            return ((0, 0), 0)
 
         flow = cv.calcOpticalFlowFarneback(
             self.previous_bw_frame,
@@ -39,4 +48,6 @@ class DenseOpticalFlow:
 
         self.previous_bw_frame = current_bw_frame
 
-        return (flow_avg_x, flow_avg_y)
+        divergence = self.find_divergence(flow)
+
+        return ((flow_avg_x, flow_avg_y), divergence)

@@ -27,12 +27,9 @@
 
     "files.exclude": {
       "**/.vscode": true,
-      "**/build": true,
-      "**/install": true,
-      "**/log": true,
       "**/.*.swp": true,
-      "**/CMakeFiles": true,
       "**/__pycache__": true,
+      "**/data": true,
     },
 
     "files.watcherExclude": {

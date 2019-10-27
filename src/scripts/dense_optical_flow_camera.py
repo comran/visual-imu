@@ -20,12 +20,8 @@ hsv = np.zeros_like(frame1)
 hsv[...,1] = 255
 last_time = time.time()
 
-#TODO: Create a plot of optical flow yz noise from algorithm
-#TODO: Use weighted average for angle.
-#TODO: Look into divergence/curl for x and roll 
+#TODO: Look into divergence/curl for x and roll
 #TODO: Contour detection research
-
-# log_file = open("results.csv", "w+")
 
 start_time = time.time()
 while(1):

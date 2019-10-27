@@ -2,7 +2,7 @@
 /install
 /log
 *.mp4
-/test_footage
+/data
 *.pyc
 *.pyo
 __pycache__
