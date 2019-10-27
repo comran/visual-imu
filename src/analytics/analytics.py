@@ -1,7 +1,8 @@
 import analytics.csv_writer as csv_writer
+import analytics.chart as chart
 
 class Analytics:
-    def __init__(self, logfile_name=None):
+    def __init__(self, show_chart=False, logfile_name=None):
         self.file = None
         self.key_order = list()
         self.values = dict()
@@ -10,6 +11,10 @@ class Analytics:
         self.csv_logger = None
         if logfile_name is not None:
             self.csv_logger = csv_writer.CsvWriter(logfile_name)
+
+        self.chart = None
+        if show_chart:
+            self.chart = chart.Chart()
 
     def feed(self, key, value):
         if key in self.values and self.values[key] is not None:
@@ -25,13 +30,14 @@ class Analytics:
 
         self.values[key] = value
 
-        print("KEY(" + key + ") VALUE(" + str(value) + ")")
-
     def complete(self):
         self.first_pass = False
 
         if self.csv_logger is not None:
             self.csv_logger.write(self.key_order, self.values)
+
+        if self.chart is not None:
+            self.chart.write(self.key_order, self.values)
 
         # Clear values dictionary.
         for key in self.values.keys():

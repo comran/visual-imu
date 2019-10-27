@@ -4,6 +4,8 @@ import optical_flow.dense_optical_flow as dense_optical_flow
 import contour_tracking.contour_tracking as contour_tracking
 import analytics.analytics as analytics
 
+import pyqtgraph as pg
+
 import argparse
 import pyqtgraph as pg
 import time
@@ -45,7 +47,7 @@ def main():
     optical_flow = dense_optical_flow.DenseOpticalFlow()
     target_tracking = contour_tracking.ContourTracking()
 
-    data_analytics = analytics.Analytics()
+    data_analytics = analytics.Analytics(show_chart=True)
 
     # Repeatedly process each frame.
     i = 0
@@ -69,10 +71,9 @@ def main():
         target_tracking.process(frame)
 
         # Log analytics data.
-        print("HERE: " + str(motion[0]))
         data_analytics.feed("vel_x", motion[0][0])
         data_analytics.feed("vel_y", motion[0][1])
-        data_analytics.feed("diverence", motion[1])
+        # data_analytics.feed("diverence", motion[1])
         data_analytics.complete()
 
         # Get ready for next iteration.
@@ -80,6 +81,11 @@ def main():
         i += 1
 
     print("Done processing " + str(i) + " frames.")
+
+    pg.QtGui.QApplication.exec_()
+
+    while True:
+        time.sleep(1)
 
 if __name__ == '__main__':
     main()
