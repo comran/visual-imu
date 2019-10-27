@@ -3,16 +3,16 @@ import pyqtgraph as pg
 import numpy as np
 
 class Chart:
-    def __init__(self):
+    def __init__(self, title):
         self.app = QtGui.QApplication([])
-        self.win = pg.GraphicsWindow(title="Peble realtime plot")
+        self.win = pg.GraphicsWindow(title=title)
         self.rt_plot = self.win.addPlot(title="Realtime plot")
         self.rt_plot.addLegend()
 
         self.curves = list()
         self.plot_data = list()
 
-        self.window_width = 100
+        self.window_width = 500
         self.ptr = -self.window_width
         self.colors = list()
         self.colors.append((255, 0, 0))
@@ -36,15 +36,15 @@ class Chart:
         if self.first_print:
             i = 0
             for key in keys:
+                color_index = i % len(self.colors)
                 self.curves.append(self.rt_plot.plot(
                     name=key,
-                    pen=pg.mkPen(color=self.colors[i], width=1)))
+                    pen=pg.mkPen(color=self.colors[color_index], width=1)))
                 self.plot_data.append(np.linspace(0, 0, self.window_width))
                 i += 1
 
         i = 0
         for component in self.plot_data:
-            print(i)
             signal = keys_to_values[keys[i]]
             component[:-1] = component[1:]
             component[-1] = float(signal)

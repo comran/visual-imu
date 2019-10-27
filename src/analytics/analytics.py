@@ -2,7 +2,7 @@ import analytics.csv_writer as csv_writer
 import analytics.chart as chart
 
 class Analytics:
-    def __init__(self, show_chart=False, logfile_name=None):
+    def __init__(self, title="Visual IMU", show_chart=False, logfile_name=None):
         self.file = None
         self.key_order = list()
         self.values = dict()
@@ -14,7 +14,7 @@ class Analytics:
 
         self.chart = None
         if show_chart:
-            self.chart = chart.Chart()
+            self.chart = chart.Chart(title=title)
 
     def feed(self, key, value):
         if key in self.values and self.values[key] is not None:

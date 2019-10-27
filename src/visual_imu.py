@@ -21,7 +21,6 @@ import util.phased_loop
 ## NEED TO DO ##################################################################
 #TODO: Distinguish translational from rotational movement.
 
-#TODO: PyQTGraph plots + data recording / MatPlotLib
 #TODO: Create/print a target and recognize it.
 #TODO: Figure out what parameters do for Farneback optical flow.
 
@@ -47,12 +46,15 @@ def main():
     optical_flow = dense_optical_flow.DenseOpticalFlow()
     target_tracking = contour_tracking.ContourTracking()
 
-    data_analytics = analytics.Analytics(show_chart=True)
+    capture_type = "camera"
+    if args.filename is not None:
+        capture_type = args.filename
+    data_analytics = analytics.Analytics(show_chart=True, title=capture_type)
 
     # Repeatedly process each frame.
     i = 0
     while True:
-        frame = capture.fetch()
+        frame, metadata = capture.fetch()
         if frame is None:
             break
 
@@ -73,7 +75,15 @@ def main():
         # Log analytics data.
         data_analytics.feed("vel_x", motion[0][0])
         data_analytics.feed("vel_y", motion[0][1])
-        # data_analytics.feed("diverence", motion[1])
+        data_analytics.feed("diverence", motion[1])
+
+        if metadata is not None:
+            for key in metadata[0]:
+                if not key == "camera_locx_vel":
+                    continue
+
+                data_analytics.feed(key, metadata[1][key])
+
         data_analytics.complete()
 
         # Get ready for next iteration.
