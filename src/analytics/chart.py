@@ -12,7 +12,7 @@ class Chart:
         self.curves = list()
         self.plot_data = list()
 
-        self.window_width = 500
+        self.window_width = 250
         self.ptr = -self.window_width
         self.colors = list()
         self.colors.append((255, 0, 0))

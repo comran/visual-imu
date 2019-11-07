@@ -15,7 +15,6 @@ class InputSource:
             first_line = self.metadata_file.readline()
 
             header_names = first_line.split(",")
-            print(len(header_names))
             for header_name in header_names:
                 header_name = header_name.strip()
                 self.metadata_keys.append(header_name)

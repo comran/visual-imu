@@ -1,9 +1,11 @@
 class CsvWriter:
     def __init__(self, logfile_name):
-        self.file = open(logfile_name, "w")
+        self.file = open(logfile_name, "w+")
         self.first_print = True
 
     def write(self, keys, keys_to_values):
+        print(keys)
+        print(keys_to_values)
         lines = ""
 
         # Log the header on first write.
@@ -26,8 +28,9 @@ class CsvWriter:
             if not last:
                 lines += ","
             else:
-                lines += "\n"
+                pass
 
         self.file.write(lines)
+        self.file.flush()
 
         self.first_print = False

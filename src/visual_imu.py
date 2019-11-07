@@ -17,8 +17,8 @@ import util.phased_loop
 #        - Get test data from blender (potentially)
 
 
-
 ## NEED TO DO ##################################################################
+#TODO: Do leftright4m towards the front of the classroom.
 #TODO: Distinguish translational from rotational movement.
 
 #TODO: Create/print a target and recognize it.
@@ -33,10 +33,14 @@ def main():
     # Parse input arguments.
     filename = None
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--file',
+    parser.add_argument('-i', '--input',
         action='store',
         dest='filename',
         help='File to use as the input device (without extension names)')
+    parser.add_argument('-l', '--log',
+        action='store',
+        dest='log',
+        help='File to use as the log')
     args = parser.parse_args()
 
     # Set up capture device, filters, and algorithms.
@@ -49,7 +53,13 @@ def main():
     capture_type = "camera"
     if args.filename is not None:
         capture_type = args.filename
-    data_analytics = analytics.Analytics(show_chart=True, title=capture_type)
+    
+    log_file = None
+    if args.log is not None:
+        log_file = args.log
+    
+    data_analytics = analytics.Analytics(show_chart=True, title=capture_type, \
+        logfile_name=log_file)
 
     # Repeatedly process each frame.
     i = 0
@@ -59,7 +69,7 @@ def main():
             break
 
         # Print out diagnostics.
-        print("Frame " + str(i))
+        print("Frame " + str(i) + " ##########################################")
         phased_loop_monitor.tick()
         print("Current frequency is: " + str(phased_loop_monitor.frequency))
 
@@ -79,8 +89,8 @@ def main():
 
         if metadata is not None:
             for key in metadata[0]:
-                if not key == "camera_locx_vel":
-                    continue
+                # if not key == "camera_locx_vel":
+                #     continue
 
                 data_analytics.feed(key, metadata[1][key])
 
