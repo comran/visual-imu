@@ -15,13 +15,13 @@ class Chart:
         self.window_width = 250
         self.ptr = -self.window_width
         self.colors = list()
+        self.colors.append((0, 255, 0))
+        self.colors.append((0, 255, 255))
         self.colors.append((255, 0, 0))
         self.colors.append((255, 125, 0))
         self.colors.append((255, 255, 0))
         self.colors.append((125, 255, 0))
-        self.colors.append((0, 255, 0))
         self.colors.append((0, 255, 125))
-        self.colors.append((0, 255, 255))
         self.colors.append((0, 125, 255))
         self.colors.append((0, 0, 255))
         self.colors.append((125, 0, 255))

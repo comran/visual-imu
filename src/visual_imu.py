@@ -18,6 +18,25 @@ import util.phased_loop
 
 
 ## NEED TO DO ##################################################################
+# Real-world test
+# - Values for accel (xyz) + gyro (xyz) + compass (xyz)
+# - Video w/ some sort of way of syncing with the data
+# - mp4 and csv
+# - Face the robot's camera towards the gridded wall
+# - Doesn't need to walk, you could also just move the cart forward
+# - Try to use RGB-Depth camera
+
+# - Create a simpler room to render that matches the motion capture area
+# - Add contour optical flow
+# - Work through math for determining scaling/rotation/position
+# - Find difference between estimated velocity and actual velocity
+
+# - Intel NUC7i3BNK
+
+
+
+
+
 #TODO: Do leftright4m towards the front of the classroom.
 #TODO: Distinguish translational from rotational movement.
 
@@ -80,17 +99,20 @@ def main():
         print(diff)
 
         # Perform tracking.
-        target_tracking.process(frame)
+        track = target_tracking.process(frame)
 
         # Log analytics data.
-        data_analytics.feed("vel_x", motion[0][0])
-        data_analytics.feed("vel_y", motion[0][1])
-        data_analytics.feed("diverence", motion[1])
+        #data_analytics.feed("vel_x", motion[0][0])
+        #data_analytics.feed("vel_y", motion[0][1])
+        #data_analytics.feed("diverence", motion[1])
 
+        data_analytics.feed("target_distance", track)
+
+        whitelist_keys = ["true_target_distance"]
         if metadata is not None:
             for key in metadata[0]:
-                # if not key == "camera_locx_vel":
-                #     continue
+                if key not in whitelist_keys:
+                    continue
 
                 data_analytics.feed(key, metadata[1][key])
 
