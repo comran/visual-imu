@@ -2,6 +2,7 @@ import contour_tracking.thresholding as thresholding
 
 import cv2 as cv
 import numpy as np
+import math
 
 FARNEBACK_PYRAMID_SCALE = 0.5
 FARNEBACK_PYRAMID_LEVELS = 1
@@ -13,21 +14,48 @@ FARNEBACK_FLAGS = 0
 
 REAL_CONTOUR_WIDTH = 0.38 # in meters
 REAL_CONTOUR_HEIGHT = 0.38 # in meters
-CAMERA_FOCAL_LENGTH = 1#25 * pow(10, -3)
+CAMERA_FOCAL_LENGTH = 1
 
 SHOW_THRESHOLDED_FRAME = False
 
 class Contour:
     def __init__(self, contour, frame_dimensions):
         self.contour = contour
-        self.x, self.y, self.w, self.h = cv.boundingRect(self.contour)
-        self.area = self.w * self.h
+        
+        bounding_rotated_rect = cv.minAreaRect(contour)
+        bounding_box_points = cv.boxPoints(bounding_rotated_rect)
+        self.bounding_rotated_rect_countour = np.int0(bounding_box_points)
+        self.area = cv.contourArea(self.bounding_rotated_rect_countour)
+
+        self.x, self.y, self.w, self.h = self.find_rotated_rect_dimens(bounding_box_points)
 
         target_plane_width = frame_dimensions[0] / self.w * REAL_CONTOUR_WIDTH
         target_plane_height = frame_dimensions[1] / self.h * REAL_CONTOUR_HEIGHT
 
         self.target_plane_dimens = (target_plane_width, target_plane_height)
         self.distance_from_camera = REAL_CONTOUR_WIDTH * CAMERA_FOCAL_LENGTH / self.w
+
+    def find_rotated_rect_dimens(self, rect_points):
+        x = int((rect_points[2][0] - rect_points[0][0]) / 2)
+        y = int((rect_points[2][1] - rect_points[0][1]) / 2)
+
+        w = int( \
+            math.sqrt( \
+                math.pow(rect_points[1][1] - rect_points[0][1], 2) + \
+                math.pow(rect_points[1][0] - rect_points[0][0], 2)))
+
+        if w < 1:
+            w = 1
+
+        h = int( \
+            math.sqrt( \
+                math.pow(rect_points[1][1] - rect_points[2][1], 2) + \
+                math.pow(rect_points[1][0] - rect_points[2][0], 2)))
+
+        if h < 1:
+            h = 1
+
+        return x, y, w, h
 
 class ContourTracking:
     def __init__(self):
@@ -47,17 +75,16 @@ class ContourTracking:
 
         bounding_box_highlight_frame = input_frame.copy()
 
-        contours = self.process_contours(thresholded_frame)
+        contours = self.process_contours(thresholded_frame, input_frame)
 
 
         target_distance = 0
         reject = False
         for contour in contours:
             if not reject:
-                # Actual distance:  5.53
-                # target_distance = 25612.631578947367 * contour.distance_from_camera
                 target_distance = contour.distance_from_camera * 640.315789474
                 print("TARGET DISTANCE: " + str(target_distance))
+
 
             r = 0
             g = 0
@@ -66,10 +93,8 @@ class ContourTracking:
             else:
                 r = 255  # Bad contour :(
 
-            cv.rectangle(bounding_box_highlight_frame,
-                (contour.x, contour.y), \
-                (contour.x + contour.w, contour.y + contour.h), \
-                    (0, g, r), 1)
+            box = contour.bounding_rotated_rect_countour
+            cv.drawContours(bounding_box_highlight_frame, [box], 0, (0, g, r), 1)
 
             reject = True
 
@@ -80,7 +105,7 @@ class ContourTracking:
 
         return target_distance
 
-    def process_contours(self, thresholded_frame):
+    def process_contours(self, thresholded_frame, input_frame):
         _, contours, _ = cv.findContours( \
             thresholded_frame, \
             cv.RETR_EXTERNAL, \
@@ -92,7 +117,7 @@ class ContourTracking:
         contour_objects = list()
         for contour in contours:
             contour_objects.append(Contour(contour, frame_dimensions))
-
+            
         contour_objects.sort(key=lambda x: x.area, reverse=True)
 
         return contour_objects

@@ -1,7 +1,7 @@
 import cv2 as cv
 import queue
 
-STOP_AFTER_FIRST_RUN = True
+STOP_AFTER_FIRST_RUN = False
 
 class InputSource:
     def __init__(self, path=None):
@@ -13,6 +13,7 @@ class InputSource:
 
         if path is None:
             self.input = cv.VideoCapture(0)
+            self.metadata_file = None
         else:
             video_path = path + ".mp4"
             csv_path = path + ".csv"
@@ -32,6 +33,7 @@ class InputSource:
         if not ret and not self.reverse:
             if STOP_AFTER_FIRST_RUN:
                 return (None, None)
+
             self.reverse = True
 
         if self.reverse:
@@ -58,11 +60,10 @@ class InputSource:
             i = 0
             for value in values:
                 key = self.metadata_keys[i]
-                self.metadata_keys_to_values[key] = value
+                self.metadata_keys_to_values[key] = value.strip('\n')
                 i += 1
 
-            metadata = (self.metadata_keys, self.metadata_keys_to_values)
+            metadata = (self.metadata_keys.copy(), self.metadata_keys_to_values.copy())
 
         self.reverse_stack.put((frame, metadata))
-
         return frame, metadata
